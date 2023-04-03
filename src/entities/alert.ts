@@ -1,3 +1,4 @@
+import { isNullOrUndefined } from 'util'
 import { Advisory, toAdvisory } from './advisory'
 import { Repository, toRepository } from './repository'
 import { Vulnerability, toVulnerability } from './vulnerability'
@@ -35,6 +36,21 @@ export const isActiveAlert = (
     repositoryVulnerabilityAlert.dismissedAt === null &&
     repositoryVulnerabilityAlert.fixedAt === null
   ) {
+    return true
+  }
+  return false
+}
+
+export const isSeverityLevelAllow = (
+  repositoryVulnerabilityAlert: RepositoryVulnerabilityAlert,
+  severityLevel: string,
+): boolean => {
+  const securityAdvisory = repositoryVulnerabilityAlert.securityAdvisory
+  const severityLevels = ["LOW", "MODERATE", "HIGH", "CRITICAL"]
+  const allowLevels = severityLevels.slice(severityLevels.indexOf(severityLevel))
+  if ( securityAdvisory === null || securityAdvisory === undefined ) {
+    return false
+  } else if ( allowLevels.includes(securityAdvisory.severity) ) {
     return true
   }
   return false

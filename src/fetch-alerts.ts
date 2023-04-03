@@ -1,4 +1,4 @@
-import { Alert, toAlert, isActiveAlert } from './entities'
+import { Alert, toAlert, isActiveAlert, isSeverityLevelAllow } from './entities'
 import { Repository } from '@octokit/graphql-schema'
 import { getOctokit } from '@actions/github'
 
@@ -7,6 +7,7 @@ export const fetchAlerts = async (
   repositoryName: string,
   repositoryOwner: string,
   count: number,
+  severityLevel: string,
 ): Promise<Alert[] | []> => {
   const octokit = getOctokit(gitHubPersonalAccessToken)
   const { repository } = await octokit.graphql<{
@@ -64,7 +65,10 @@ export const fetchAlerts = async (
   if (gitHubAlerts) {
     const alerts: Alert[] = []
     for (const gitHubAlert of gitHubAlerts) {
-      if (gitHubAlert && gitHubAlert.node && isActiveAlert(gitHubAlert.node)) {
+      if (
+        gitHubAlert && gitHubAlert.node && isActiveAlert(gitHubAlert.node) &&
+        isSeverityLevelAllow(gitHubAlert.node, severityLevel))
+      {
         alerts.push(toAlert(gitHubAlert.node))
       }
     }

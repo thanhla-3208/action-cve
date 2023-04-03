@@ -35,6 +35,9 @@ inputs:
   count:
     description: 'Number of vulnerability alerts to send'
     default: 20
+  severity_level:
+    description: 'Severity level of vulnerability alerts want to send equal or higher than'
+    default: 'ALL'
 branding:
   icon: 'alert-octagon'
   color: 'red'
